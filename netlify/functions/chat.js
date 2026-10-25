@@ -41,7 +41,10 @@ const clip = (v, n) => String(v == null ? "" : v).slice(0, n);
 async function sendTelegram(L) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) throw new Error("telegram_not_configured");
+  if (!token || !chatId) {
+    console.error("Telegram env vars missing:", !token ? "TELEGRAM_BOT_TOKEN" : "", !chatId ? "TELEGRAM_CHAT_ID" : "");
+    throw new Error("telegram_not_configured");
+  }
   const services = [].concat(L.services || []).map((s) => clip(s, 80)).join(", ");
   const lines = [
     "New lead - Vibe Studio",
@@ -84,7 +87,7 @@ exports.handler = async (event) => {
 
   // Chat -> Claude
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return json(500, { error: "not_configured" });
+  if (!key) { console.error("ANTHROPIC_API_KEY is missing at runtime (redeploy after adding env vars)"); return json(500, { error: "not_configured" }); }
   const messages = (Array.isArray(body.messages) ? body.messages : [])
     .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
     .slice(-30)
