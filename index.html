@@ -1148,6 +1148,8 @@ var SITE = {
     $$('[data-open-chat]').forEach(function(b){b.addEventListener('click',open)});
     $('#chatX').addEventListener('click',close);
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!chat.hidden)close()});
+    // links like vibestudioyvr.ca/?chat=1 (e.g. the "Get your own" button on listing sites) open the chat straight away
+    if(/[?&]chat=1(&|$)/.test(location.search)) open();
 
     box.addEventListener('input',function(){box.style.height='auto';box.style.height=Math.min(120,box.scrollHeight)+'px'});
     box.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit?form.requestSubmit():form.dispatchEvent(new Event('submit',{cancelable:true}))}});
